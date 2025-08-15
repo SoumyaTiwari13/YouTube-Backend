@@ -14,11 +14,11 @@ mongoose.connect('mongodb+srv://engrsoumyatiwari:gaZ8m9I4mwuixRfW@cluster3.yb6an
     console.log("MongoDB connected");
 })
 .catch(()=>{
-    console.log("DB failed", err);
+    console.log("DB failed");
 })
 
 app.use(express.json({ limit: '1mb' }));
-app.use(cors({ origin: 'http://localhost:5180' || '*' }));
+app.use(cors({ origin: 'http://localhost:5181' || '*' }));
 
 //Routes
 authRoutes(app);
