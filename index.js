@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 
 const app = express();
+app.use(cors());
 
 mongoose.connect('mongodb+srv://engrsoumyatiwari:gaZ8m9I4mwuixRfW@cluster3.yb6anm6.mongodb.net/')//connect reurns a promise
 .then(() =>{
@@ -18,7 +19,7 @@ mongoose.connect('mongodb+srv://engrsoumyatiwari:gaZ8m9I4mwuixRfW@cluster3.yb6an
 })
 
 app.use(express.json({ limit: '1mb' }));
-app.use(cors({ origin: 'http://localhost:5181' || '*' }));
+
 
 //Routes
 authRoutes(app);
