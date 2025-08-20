@@ -10,8 +10,8 @@ const videoSchema = new mongoose.Schema({
   uploader: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   category: { type: String, default: 'All' },
   views: { type: Number, default: 0 },
-  likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  dislikedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  likedBy: Number,
+  dislikedBy: Number,
   uploadDate: { type: Date, default: Date.now }
 }, { timestamps: true });
 

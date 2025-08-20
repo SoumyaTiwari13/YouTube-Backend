@@ -58,3 +58,96 @@ export const toggleLike = async (req, res) => {
   await v.save();
   res.json({ likes: v.likedBy.length, dislikes: v.dislikedBy.length });
 };
+
+
+ export const handleCategory = async(req, res)=> {
+  try {
+    const { category } = req.body;
+    let videos;
+    if (category === "all") {
+      videos = await youtubeCollection.find({})
+    } else {
+      videos = await youtubeCollection.find({ category })
+    }
+    res.status(200).json({ success: true, data: videos });
+  } catch (error) {
+    console.error("Error fetching videos:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+
+export const handleSearch = async (req, res)=> {
+  try {
+    const { search } = req.body;
+
+    if (!search || typeof search !== 'string') {
+      return res.status(400).json({ error: 'Search term is required and must be a string.' });
+    }
+
+    const searchItem = await youtubeCollection.find({
+      title: { $regex: search, $options: 'i' } // case-insensitive search
+    });
+
+
+    return res.status(200).json(searchItem);
+  } catch (error) {
+    console.error('Search error:', error);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+}
+
+
+
+export const handleLike = async (req, res)=> {
+  try {
+    const { videoId, userId } = req.body;
+
+    if (!videoId || !userId) {
+      return res.status(400).json({ message: "videoId and userId are required" });
+    }
+
+    const video = await youtubeCollection.findOne({ videoId });
+    const user = await User.findById(userId);
+
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Initialize arrays if they don't exist
+    if (!user.likedVideos) user.likedVideos = [];
+    if (!video.likedBy) video.likedBy = [];
+
+    const alreadyLiked = user.likedVideos.includes(videoId);
+
+    if (alreadyLiked) {
+      // Unlike: remove videoId from user and userId from video
+      user.likedVideos = user.likedVideos.filter(id => id !== videoId);
+      video.likedBy = video.likedBy.filter(id => id !== userId);
+      video.likes = Math.max(0, video.likes - 1); // Prevent negative likes
+
+      await user.save();
+      await video.save();
+
+      return res.status(200).json({ message: "Video unliked successfully" });
+    } else {
+      // Like: add videoId to user and userId to video
+      user.likedVideos.push(videoId);
+      video.likedBy.push(userId);
+      video.likes = (video.likes || 0) + 1;
+
+      await user.save();
+      await video.save();
+
+      return res.status(200).json({ message: "Video liked successfully" });
+    }
+
+  } catch (error) {
+    console.error("Error liking video:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
