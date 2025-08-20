@@ -60,21 +60,23 @@ export const toggleLike = async (req, res) => {
 };
 
 
- export const handleCategory = async(req, res)=> {
+ export const handleCategory = async (req, res) => {
   try {
-    const { category } = req.body;
+    const { category } = req.query;  // <-- query instead of body
     let videos;
+
     if (category === "all") {
-      videos = await youtubeCollection.find({})
+      videos = await youtubeCollection.find({});
     } else {
-      videos = await youtubeCollection.find({ category })
+      videos = await youtubeCollection.find({ category });
     }
+
     res.status(200).json({ success: true, data: videos });
   } catch (error) {
     console.error("Error fetching videos:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
-}
+};
 
 
 export const handleSearch = async (req, res)=> {

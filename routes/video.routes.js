@@ -9,8 +9,8 @@ app.get('/videos/:id', getVideo);
 app.post('/videos', auth, createVideo);
 app.put('/videos/:id', auth, updateVideo);
 app.delete('/videos/:id', auth, deleteVideo);
-app.post("/category", handleCategory);
-app.post("/search", handleSearch);
+app.get("/category", handleCategory);
+app.get("/search", handleSearch);
 app.post("/video/like/increment", handleLike);
 
 
