@@ -66,9 +66,9 @@ export const toggleLike = async (req, res) => {
     let videos;
 
     if (category === "all") {
-      videos = await youtubeCollection.find({});
+      videos = await Video.find({});
     } else {
-      videos = await youtubeCollection.find({ category });
+      videos = await Video.find({ category });
     }
 
     res.status(200).json({ success: true, data: videos });
@@ -87,7 +87,7 @@ export const handleSearch = async (req, res)=> {
       return res.status(400).json({ error: 'Search term is required and must be a string.' });
     }
 
-    const searchItem = await youtubeCollection.find({
+    const searchItem = await Video.find({
       title: { $regex: search, $options: 'i' } // case-insensitive search
     });
 
@@ -109,7 +109,7 @@ export const handleLike = async (req, res)=> {
       return res.status(400).json({ message: "videoId and userId are required" });
     }
 
-    const video = await youtubeCollection.findOne({ videoId });
+    const video = await Video.findOne({ videoId });
     const user = await User.findById(userId);
 
     if (!video) {
